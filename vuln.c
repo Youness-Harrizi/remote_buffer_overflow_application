@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// gcc -m32 vuln.c  -o vuln-format -z execstack -fno-stack-protector
+// echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+//  env - /home/renault/remote_buffer_overflow_app/vuln 5602
+// to avoid overlay  env - /home/renault/remote_buffer_overflow_app/vuln 5602
 void error(char *msg)
 {
 perror(msg);
@@ -14,11 +18,14 @@ exit(1);
 void viewer(char *string)
 {
 //declaration of a char buffer
-char buffer[1024];
+//char buffer[1024];
+char buffer[512];
 //we copy the parameter string to that buffer
 strcpy(buffer,string);
 //finally we print the content of the string buffer to stdout
+printf("size :\n%d\n", strlen(buffer) ); // prints 10
 printf("The user entered: %s",buffer);
+
 }
 int main(int argc, char *argv[])
 {
@@ -59,7 +66,7 @@ struct sockaddr_in serv_addr, cli_addr;
  printf("buffer :%p",buffer);
  printf("buffer_addr :%p",&buffer);
  viewer(buffer);
- n = write(newsockfd,"The message is been printed to server stdout", strlen("The message is been printed to server's stdout"));
+ //n = write(newsockfd,"The message is been printed to server stdout", strlen("The message is been printed to server's stdout"));
  if (n < 0) error("ERROR writing to socket");
  }
  return 0;
